@@ -11,6 +11,8 @@ module.exports = defineConfig({
       config.viewportWidth = 1920;
       config.viewportHeight = 1080;
 
+      config.env.USER_NAME = process.env.USER_NAME
+      config.env.PASSWORD = process.env.PASSWORD
       return config;
     },
     baseUrl: 'https://www.saucedemo.com',
