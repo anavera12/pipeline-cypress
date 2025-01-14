@@ -1,39 +1,78 @@
-# Testes Automatizados no Swag Labs com Cypress
+# Como mascarar dados sensíveis na pipeline utilizando Cypress
 
-Este repositório contém testes automatizados para o **SwagLabs**, um site de compra e autenticação simulado, desenvolvidos utilizando o framework [Cypress](https://www.cypress.io/). 
+Este repositório tem como objetivo demonstrar boas práticas para manter dados sensíveis (como senhas, tokens de API, chaves de acesso) seguros e mascarados quando executamos testes de ponta a ponta (E2E) com Cypress em uma pipeline de Integração Contínua (CI), usando GitHub Actions como exemplo.
 
 ## Índice
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Funcionalidades Testadas](#funcionalidades-testadas)
-- [Tecnologias Utilizadas](#tecnologias-utilizadas)
-- [Informações adicionais](#informações-adicionais)
+- [Importância do mascaramento de dados](#por-que-precisamos-mascarar-dados-sensíveis)
+- [Reposritory Secret](#criando-secrets-no-github)
+- [Workflow secrets](#adicionando-secrets-no-arquivo-de-workflow)
+- [Configurando o cypress](#configurando-o-cypress-para-usar-as-variáveis-de-ambiente)
+- [Boas práticas](#boas-práticas-para-evitar-exposição-de-dados)
 
-## Sobre o Projeto
+## 1. Por que precisamos mascarar dados sensíveis?
 
-O Swag Labs é um projeto de demonstração disponibilizado pela Sauce Labs que simula uma aplicação de e-commerce para fins de estudo e prática de testes (principalmente testes de automação).
+- Segurança: As informações confidenciais (senhas, tokens, etc.) não podem ficar expostas em arquivos versionados ou em logs de execução.
+- Compliance: Dependendo da sua organização, existem regras de compliance que exigem esse cuidado.
+- Boas práticas: Facilita a manutenção do projeto e evita vazamento de dados.
 
+## 2. Criando Secrets no GitHub
 
-Os testes automatizados cobrem diferentes cenários, como casos de sucesso e falhas esperadas.
+- Acesse o repositório no GitHub.
+- Vá em Settings > Secrets and variables > Actions.
+- Clique em New repository secret.
+- Crie uma secret para cada valor sensível (por exemplo: USER_NAME/PASSWORD, API_KEY, TOKEN).
 
-Usuário escolhido para os testes: 
-standard_user: Usuário “comum” que consegue usar o site sem problemas.
-
-## Funcionalidades Testadas
-
-- **Login**: Escolhi mostrar diferentes formas de se realizar o login.
-- **Carrinho de compras**: Simular adição e remoção de produtos no carrinho, visualizar os itens selecionados, total e contagem de itens.
-- **Checkout**: Simular o processo de finalização da compra, incluir dados como nome, sobrenome e CEP (fictícios).
+Essas variáveis não ficam expostas no repositório e podem ser utilizadas apenas dentro dos arquivos de workflow do GitHub Actions.
   
-## Tecnologias Utilizadas
+## 3. Adicionando secrets no arquivo de workflow
+No seu arquivo de workflow (.github/workflows/ci.yml), adicione as secrets como variáveis de ambiente para que o Cypress possa acessá-las:
+```
+name: Cypress Tests
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with: 
+          node-version: v20.17.0
+      - name: Install dependencies
+        run:
+          npm install
+          npm run build
+          npm run test
+      - name: Run Cypress Tests
+        run: npx cypress run
+        env:
+          USER_NAME: ${{ secrets.USER_NAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+```
+- secrets.USER_NAME e secrets.PASSWORD referem-se às secrets que você adicionou nas configurações do repositório.
+- Esses valores não aparecem em texto puro nos logs do GitHub, pois o GitHub automaticamente os mascara.
 
-- [Cypress]: Framework de testes automatizados E2E.
-- [VSCode]: IDE de desenvolvimento
-- [Node.js]: Ambiente de execução para JavaScript.
+## 4. Configurando o Cypress para usar as variáveis de ambiente
+No arquivo de configuração do Cypress (cypress.config.js ou cypress.config.ts), você pode captar as variáveis de ambiente do sistema e atribuí-las ao objeto env do Cypress:
+```
+const { defineConfig } = require('cypress');
 
-## Impedimentos🚨
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      // Passa as variáveis de ambiente do sistema para o config do Cypress
+      config.env.DB_PASSWORD = process.env.DB_PASSWORD;
+      config.env.API_KEY = process.env.API_KEY;
+      config.env.TOKEN = process.env.TOKEN;
+      
+      return config;
+    },
+  },
+});
+```
+## 5. Boas práticas para evitar exposição de dados
 
-#### Login
-
-- Não utilizei a opção de armazenamento de cookie para os testes, pos não achei que encaixou bem com a performance do site.
-- Não foi adicionar o .env dentro do .gitignore por serem dados públicos, e para ficar de maior facilidade para acessar os dados.
+- Não versionar o .env: Se você utiliza um arquivo .env para desenvolvimento local, adicione-o ao .gitignore. Os valores de produção ou staging devem ser configurados como secrets no GitHub, não no repositório.
+- Evitar logs de variáveis sensíveis: Nunca utilize
