@@ -5,7 +5,7 @@ Este repositório tem como objetivo demonstrar boas práticas para manter dados 
 ## Índice
 
 - [Importância do mascaramento de dados](#por-que-precisamos-mascarar-dados-sensíveis)
-- [Reposritory Secret](#criando-secrets-no-github)
+- [Repositório Secret](#criando-secrets-no-github)
 - [Workflow secrets](#adicionando-secrets-no-arquivo-de-workflow)
 - [Configurando o cypress](#configurando-o-cypress-para-usar-as-variáveis-de-ambiente)
 - [Boas práticas](#boas-práticas-para-evitar-exposição-de-dados)
