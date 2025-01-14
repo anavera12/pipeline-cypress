@@ -19,9 +19,8 @@ module.exports = defineConfig({
     chromeWebSecurity: false,
     defaultCommandTimeout: 10000,
     specPattern: [
-      'cypress/e2e/compra/carrinho.cy.js',
-      'cypress/e2e/checkout/checkout.cy.js',
-    ], //utilizei do specPattern para organizar a ordem da execução dos testes.
+      'cypress/e2e/carrinho.cy.js',
+    ], //utilizei do specPattern para chamar apenas o arquivo de carrinho e ignorar o de utils.cy
     env: { ...process.env },
   },
 });
