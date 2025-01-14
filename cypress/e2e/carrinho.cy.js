@@ -5,7 +5,7 @@ import { ValidarNomeEValorMochila, adicionarItem } from "./utils.cy";
 
 describe('Teste focado em validar o carrinho', () => {
     beforeEach(() => {
-        cy.login(Cypress.env('username'), Cypress.env('password'))
+        cy.login(Cypress.env('USER_NAME'), Cypress.env('PASSWORD'))
     });
 
     it('Adicionar 1 item e validar seu valor, nome e quantidade', () => {
