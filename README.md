@@ -80,4 +80,4 @@ module.exports = defineConfig({
 
 ## 6. Informações adicionais ❗❗
 
-- As variaváveis que estão dentro do .env devem conter a mesma nomeclatura das variáveis adicionadas no respositório secret no github.
+- As variaváveis que estão dentro do .env devem conter a mesma nomenclatura das variáveis adicionadas no respositório secret no github.
