@@ -76,7 +76,13 @@ module.exports = defineConfig({
 ## 5. Boas práticas para evitar exposição de dados
 
 - Não versionar o .env: Se você utiliza um arquivo .env para desenvolvimento local, adicione-o ao .gitignore. Os valores de produção ou staging devem ser configurados como secrets no GitHub, não no repositório.
-- Evitar logs de variáveis sensíveis: Nunca utilize
+- Não exibir segredos em logs: evite usar ```console.log(Cypress.env('DB_PASSWORD'))```, pois isso pode vazar em relatórios.
+- Mascarar manualmente valores sensíveis (se necessário): se ainda assim precisar exibir algo parecido em logs, use o comando de mascaramento do GitHub:
+```
+- name: Mask sensitive data
+  run: echo "::add-mask::${{ secrets.DB_PASSWORD }}"
+```
+Assim, se o valor aparecer em algum log, ele será substituído por ***.
 
 ## 6. Informações adicionais ❗❗
 
