@@ -9,6 +9,7 @@ Este repositório tem como objetivo demonstrar boas práticas para manter dados 
 - [Workflow secrets](#adicionando-secrets-no-arquivo-de-workflow)
 - [Configurando o cypress](#configurando-o-cypress-para-usar-as-variáveis-de-ambiente)
 - [Boas práticas](#boas-práticas-para-evitar-exposição-de-dados)
+- [Informações adicionais](#informações-adicionais)
 
 ## 1. Por que precisamos mascarar dados sensíveis?
 
@@ -76,3 +77,7 @@ module.exports = defineConfig({
 
 - Não versionar o .env: Se você utiliza um arquivo .env para desenvolvimento local, adicione-o ao .gitignore. Os valores de produção ou staging devem ser configurados como secrets no GitHub, não no repositório.
 - Evitar logs de variáveis sensíveis: Nunca utilize
+
+## 6. Informações adicionais ❗❗
+
+- As variaváveis que estão dentro do .env devem conter a mesma nomeclatura das variáveis adicionadas no respositório secret no github.
